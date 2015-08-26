@@ -58,7 +58,7 @@ cleandb:
 	-rm -rf dbbench/
 
 $(LIBRARY): $(LIB_OBJS)
-	$(CC) -pthread -fPIC -shared $(LIB_OBJS) -o $(LIBRARY) -lm
+	$(CC)  -fPIC -shared $(LIB_OBJS) -o $(LIBRARY) -lm
 
 db-bench: $(BENCH_OBJS) $(LIB_OBJS)
-	$(CC) -pthread $(LIB_OBJS) $(BENCH_OBJS) $(DEBUG) -o $@
+	$(CC)  $(LIB_OBJS) $(BENCH_OBJS) $(DEBUG) -o $@

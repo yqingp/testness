@@ -8,12 +8,14 @@
 #define nessDB_POSIX_H_
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
 #include <pthread.h>
 #include <time.h>
 #include <sys/time.h>
 
+#define LOG printf("[FILE:[%s],LINE[%d],FUNCTION[%s]]\n",__FILE__, __LINE__, __func__)
 
 #define pthread_call(result, msg)					\
 	do {								\
@@ -128,6 +130,7 @@ static inline void ness_rwlock_destroy(struct rwlock *rwlock)
 
 static inline void rwlock_read_lock(struct rwlock *rwlock, ness_mutex_t *mutex)
 {
+    LOG;
 	if (rwlock->writer || rwlock->want_writer) {
 		rwlock->want_reader++;
 		while (rwlock->writer || rwlock->want_writer) {
@@ -149,6 +152,7 @@ static inline void rwlock_read_unlock(struct rwlock *rwlock)
 
 static inline void rwlock_write_lock(struct rwlock *rwlock, ness_mutex_t *mutex)
 {
+    LOG;
 	if (rwlock->reader || rwlock->writer) {
 		rwlock->want_writer++;
 		while (rwlock->reader || rwlock->writer)
@@ -171,6 +175,7 @@ static inline void rwlock_write_unlock(struct rwlock *rwlock)
 
 static inline int rwlock_users(struct rwlock *rwlock)
 {
+    LOG;
 	return rwlock->reader + rwlock->want_reader + rwlock->writer + rwlock->want_writer;
 }
 
@@ -191,6 +196,7 @@ static inline int rwlock_writers(struct rwlock *rwlock)
 
 static inline int rwlock_blocked_writers(struct rwlock *rwlock)
 {
+    LOG;
 	return rwlock->want_writer;
 }
 

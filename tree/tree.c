@@ -43,6 +43,7 @@ static void _add_pivot_to_parent(struct tree *t,
                                  struct node *b,
                                  struct msg *spk)
 {
+    LOG;
 	int i;
 	int pidx;
 	struct child_pointer *cptr;
@@ -106,6 +107,7 @@ static void _leaf_and_lmb_split(struct tree *t,
                                 struct node **b,
                                 struct msg **split_key)
 {
+    LOG;
 	struct child_pointer *cptra;
 	struct child_pointer *cptrb;
 	struct node *leafa;
@@ -202,6 +204,7 @@ static void _node_split(struct tree *t,
                         struct node **b,
                         struct msg **split_key)
 {
+    LOG;
 	int i;
 	int pivots_old;
 	int pivots_in_a;
@@ -299,6 +302,7 @@ void node_split_child(struct tree *t,
                       struct node *parent,
                       struct node *child)
 {
+    LOG;
 	int child_num;
 	struct node *a;
 	struct node *b;
@@ -324,6 +328,7 @@ void node_split_child(struct tree *t,
 
 enum reactivity get_reactivity(struct tree *t, struct node *node)
 {
+    LOG;
 	uint32_t children = node->n_children;
 
 	if (nessunlikely(node->height == 0)) {
@@ -350,6 +355,7 @@ enum reactivity get_reactivity(struct tree *t, struct node *node)
  */
 void leaf_put_cmd(struct node *leaf, struct bt_cmd *cmd)
 {
+    LOG;
 	leaf_apply_msg(leaf, cmd);
 	leaf->msn = cmd->msn > leaf->msn ? cmd->msn : leaf->msn;
 	node_set_dirty(leaf);
@@ -365,6 +371,7 @@ void leaf_put_cmd(struct node *leaf, struct bt_cmd *cmd)
  */
 void nonleaf_put_cmd(struct node *node, struct bt_cmd *cmd)
 {
+    LOG;
 	uint32_t pidx;
 	struct nmb *buffer;
 
@@ -392,6 +399,7 @@ void nonleaf_put_cmd(struct node *node, struct bt_cmd *cmd)
  */
 void node_put_cmd(struct tree *t, struct node *node, struct bt_cmd *cmd)
 {
+    LOG;
 	if (nessunlikely(node->height == 0)) {
 		leaf_put_cmd(node, cmd);
 		status_increment(&t->e->status->tree_leaf_put_nums);
@@ -413,6 +421,7 @@ void node_put_cmd(struct tree *t, struct node *node, struct bt_cmd *cmd)
  */
 static void _root_swap(struct node *new_root, struct node *old_root)
 {
+    LOG;
 	MSN old_msn;
 	MSN new_msn;
 	NID old_nid;
@@ -450,6 +459,7 @@ static void _root_split(struct tree *t,
                         struct node *new_root,
                         struct node *old_root)
 {
+    LOG;
 	struct node *a;
 	struct node *b;
 	struct msg *split_key = NULL;
@@ -487,6 +497,7 @@ static void _root_split(struct tree *t,
  */
 void _root_fissible(struct tree *t, struct node *root)
 {
+    LOG;
 	struct node *new_root;
 	uint32_t new_root_height = 1;
 	uint32_t new_root_children = 2;
@@ -515,6 +526,7 @@ void _root_fissible(struct tree *t, struct node *root)
  */
 int root_put_cmd(struct tree *t, struct bt_cmd *cmd)
 {
+    LOG;
 	struct node *root;
 	enum reactivity re;
 	volatile int hasput = 0;
@@ -632,6 +644,7 @@ int tree_put(struct tree *t,
              msgtype_t type,
              TXN *txn)
 {
+    LOG;
 	TXNID child_xid = TXNID_NONE;
 	TXNID parent_xid = TXNID_NONE;
 
@@ -668,6 +681,7 @@ int tree_put(struct tree *t,
 
 void tree_free(struct tree *t)
 {
+    LOG;
 	if (!t) return;
 
 	/* flush dirty nodes&hdr to disk */

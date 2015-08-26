@@ -173,6 +173,7 @@ static void _place_node_and_buffer_on_background(struct tree *t, struct node *no
  */
 void tree_flush_node_on_background(struct tree *t, struct node *parent)
 {
+    LOG;
 	int childnum;
 	enum reactivity re;
 	struct node *child;

@@ -19,6 +19,7 @@
 #define VALGRIND_ENABLE_CHECKING(p, size) ((void) 0)
 #endif
 
+#define LOG printf("[FILE:[%s],LINE[%d],FUNCTION[%s]]\n",__FILE__, __LINE__, __func__)
 /*
  * some probes
  */
@@ -52,6 +53,7 @@ struct status {
 };
 
 static inline struct status *status_new() {
+    LOG;
 	struct status *status;
 
 	status = xcalloc(1, sizeof(*status));

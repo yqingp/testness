@@ -24,8 +24,10 @@ void counter_free(struct counter *c)
 
 void counter_incr(struct counter *c)
 {
-	int cpu = sched_getcpu();
-
+    int cpu = 1;
+#ifdef __linux__
+    cpu = sched_getcpu();
+#endif
 	nassert(cpu < c->cpus);
 	c->per_cpu_counter[cpu]++;
 }

@@ -250,6 +250,7 @@ int ness_os_close(int fd)
 
 void ness_check_dir(const char *pathname)
 {
+    LOG;
 	int i;
 	int len;
 	char dirname[1024];

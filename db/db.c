@@ -22,6 +22,7 @@ struct nessdb {
 };
 
 struct env *env_open(const char *home, uint32_t flags) {
+    LOG;
 	struct env *e;
 
 	e = xcalloc(1, sizeof(*e));
@@ -112,6 +113,7 @@ struct nessdb *db_open(struct env *e, const char *dbname) {
 
 int db_set(struct nessdb *db, struct msg *k, struct msg *v)
 {
+    LOG;
 	int r;
 
 	r = tree_put(db->tree, k, v, MSG_INSERT, NULL);

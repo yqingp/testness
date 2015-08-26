@@ -53,7 +53,7 @@
 
 #define nesslikely(EXPR) __builtin_expect(!! (EXPR), 1)
 #define nessunlikely(EXPR) __builtin_expect(!! (EXPR), 0)
-
+#define LOG printf("[FILE:[%s],LINE[%d],FUNCTION[%s]]\n",__FILE__, __LINE__, __func__)
 /* reserved 1024bytes for double-write tree header */
 #define BLOCK_OFFSET_START (ALIGN(1024))
 

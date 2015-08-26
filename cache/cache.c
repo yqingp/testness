@@ -22,12 +22,14 @@ struct cpair_htable {
 /* hashtable array lock */
 static inline void cpair_locked_by_key(struct cpair_htable *table, NID key)
 {
+    LOG;
 	mutex_lock(&table->mutexes[key & (PAIR_LIST_SIZE - 1)].aligned_mtx);
 }
 
 /* hashtable array unlock */
 static inline void cpair_unlocked_by_key(struct cpair_htable *table, NID key)
 {
+    LOG;
 	mutex_unlock(&table->mutexes[key & (PAIR_LIST_SIZE - 1)].aligned_mtx);
 }
 
@@ -143,6 +145,7 @@ void cpair_htable_remove(struct cpair_htable *table, struct cpair *pair)
 }
 
 struct cpair *cpair_htable_find(struct cpair_htable *table, NID key) {
+    LOG;
 	int hash;
 	struct cpair *curr;
 
@@ -205,6 +208,7 @@ static inline void _cf_clock_read_unlock(struct cache_file *cf)
 
 static inline int _must_evict(struct cache *c)
 {
+    LOG;
 	int must;
 
 	mutex_lock(&c->mtx);
@@ -216,6 +220,7 @@ static inline int _must_evict(struct cache *c)
 
 static inline int _need_evict(struct cache *c)
 {
+    LOG;
 	int need;
 
 	mutex_lock(&c->mtx);
@@ -286,7 +291,7 @@ void _run_eviction(struct cache *c)
 		nxt = cur->list_next;
 		_cf_clock_read_unlock(cf);
 
-		if ((users == 0)) {
+		if (users == 0) {
 			_try_evict_pair(cf, cur);
 			cond_signalall(&c->wait_makeroom);
 		}
@@ -305,6 +310,7 @@ static void *flusher_cb(void *arg)
 }
 
 struct cache *cache_new(struct env *e) {
+    LOG;
 	struct cache *c;
 
 	c = xcalloc(1, sizeof(*c));
@@ -339,6 +345,7 @@ void _cpair_insert(struct cache_file *cf, struct cpair *p)
 /* make room for writes */
 void _make_room(struct cache *c)
 {
+    LOG;
 	/* check cache limits, if reaches we should slow down */
 	int allow_delay = 1;
 
@@ -382,6 +389,7 @@ int cache_get_and_pin(struct cache_file *cf,
                       void **n,
                       enum lock_type locktype)
 {
+    LOG;
 	struct cpair *p;
 	struct cache *c = cf->cache;
 
@@ -486,6 +494,7 @@ int cache_put_and_pin(struct cache_file *cf, NID k, void *v)
 
 void cache_unpin(struct cache_file *cf, struct cpair *p, struct cpair_attr attr)
 {
+    LOG;
 	struct cache *c = cf->cache;
 
 	nassert(p);

@@ -8,6 +8,7 @@
 #include "txnmgr.h"
 
 struct txnmgr *txnmgr_new(void) {
+    LOG;
 	struct txnmgr *tm;
 
 	tm = xcalloc(1, sizeof(*tm));

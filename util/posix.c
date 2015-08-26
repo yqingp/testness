@@ -109,15 +109,15 @@ static inline long long millisec_elapsed(struct timespec diff)
 	return ((long long)diff.tv_sec * 1000) + (diff.tv_nsec / 1000000);
 }
 
-static inline long long microsec_elapsed(struct timespec diff)
-{
-	return ((long long)diff.tv_sec * 1000000) + (diff.tv_nsec / 1000);
-}
+/* static inline long long microsec_elapsed(struct timespec diff) */
+/* { */
+/* 	return ((long long)diff.tv_sec * 1000000) + (diff.tv_nsec / 1000); */
+/* } */
 
-static inline long long nanosec_elapsed(struct timespec diff)
-{
-	return ((long long)diff.tv_sec * 1000000000) + diff.tv_nsec;
-}
+/* static inline long long nanosec_elapsed(struct timespec diff) */
+/* { */
+/* 	return ((long long)diff.tv_sec * 1000000000) + diff.tv_nsec; */
+/* } */
 
 long long time_diff_ms(struct timespec start, struct timespec end)
 {
@@ -126,6 +126,7 @@ long long time_diff_ms(struct timespec start, struct timespec end)
 
 /* cron functions */
 struct cron *cron_new(func f, uint32_t period_ms) {
+    LOG;
 	struct cron *cron;
 
 	cron = xcalloc(1, sizeof(*cron));
@@ -182,6 +183,7 @@ static void *_do_cron(void *arg)
 
 int cron_start(struct cron *cron, void *arg)
 {
+    LOG;
 	pthread_attr_t attr;
 
 	if (cron->isalive) return -1;

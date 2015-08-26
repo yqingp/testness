@@ -11,9 +11,9 @@
 struct random *rnd;
 static struct env *e;
 static struct nessdb *db;
-static uint64_t FLAGS_num = 1000000;
-static uint64_t FLAGS_cache_size = (1024 * 1024 * 20);
-static const char* FLAGS_benchmarks = "fillrandom";
+static uint64_t FLAGS_num = 1;
+static uint64_t FLAGS_cache_size = (1024 * 1024 * 10);
+static const char* FLAGS_benchmarks = "fillseq";
 static ness_compress_method_t FLAGS_method = NESS_SNAPPY_METHOD;
 
 void _print_warnings()
@@ -103,6 +103,7 @@ void report(char *name, struct timespec a, struct timespec b)
 
 void dbwrite(char *name, int random)
 {
+    LOG;
 	uint32_t i;
 	int done = 0;;
 	int next_report = 100;
@@ -112,8 +113,11 @@ void dbwrite(char *name, int random)
 		char *vbuf;
 		int key = random ? rnd_next(rnd) % FLAGS_num : i;
 
-		memset(kbuf, 0, KEY_SIZE);
+        printf("%016d\n", key);
+        memset(kbuf, 0, KEY_SIZE);
 		snprintf(kbuf, KEY_SIZE, "%016d", key);
+
+        printf("%s\n", kbuf);
 		vbuf = rnd_str(rnd, VAL_SIZE);
 
 		struct msg k = {.data = kbuf, .size = strlen(kbuf)};
@@ -166,6 +170,7 @@ void writerandom()
 
 int dbopen()
 {
+    LOG;
 	char basedir[] = "./dbbench/";
 	char dbname[] = "test.db";
 
@@ -186,6 +191,7 @@ int dbopen()
 		return 0;
 	}
 
+    LOG;
 	return 1;
 }
 
@@ -194,7 +200,7 @@ int run()
 	int ret = 1;
 	const char* benchmarks = FLAGS_benchmarks;
 
-	_print_header();
+	/* _print_header(); */
 
 	if (strncmp("fillseq", benchmarks, 7) == 0) {
 		writeseq();
