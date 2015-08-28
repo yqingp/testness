@@ -9,6 +9,7 @@
 /* auto extend pairs array size */
 void _extend(struct block *b, uint32_t n)
 {
+    LOG;
 	DISKOFF size = b->pairs_used + n;
 
 	if (size >= b->pairs_size) {
@@ -23,6 +24,7 @@ void _extend(struct block *b, uint32_t n)
 
 static int _pair_compare_fun(const void *a, const void *b)
 {
+    LOG;
 	struct block_pair *pa = (struct block_pair*)a;
 	struct block_pair *pb = (struct block_pair*)b;
 
@@ -35,6 +37,8 @@ static int _pair_compare_fun(const void *a, const void *b)
 }
 
 struct block *block_new(struct env *e) {
+
+    LOG;
 	struct block *b;
 
 	b = xcalloc(1, sizeof(*b));
@@ -51,6 +55,7 @@ void block_init(struct block *b,
                 struct block_pair *pairs,
                 uint32_t n)
 {
+    LOG;
 	uint32_t i;
 
 	nassert(n > 0);
@@ -75,6 +80,7 @@ DISKOFF block_alloc_off(struct block *b,
                         uint32_t skeleton_size,
                         uint32_t height)
 {
+    LOG;
 	DISKOFF r;
 	uint32_t i;
 	int found = 0;
@@ -141,6 +147,7 @@ int block_get_off_bynid(struct block *b,
                         uint64_t nid,
                         struct block_pair **bpair)
 {
+    LOG;
 	uint32_t i;
 	int rval = NESS_ERR;
 
@@ -168,6 +175,7 @@ int block_get_off_bynid(struct block *b,
  */
 void block_shrink(struct block *b)
 {
+    LOG;
 	uint32_t i, j;
 
 	rwlock_write_lock(&b->rwlock, &b->mtx);
@@ -182,6 +190,7 @@ void block_shrink(struct block *b)
 
 void block_free(struct block *b)
 {
+    LOG;
 	if (!b) return;
 
 	ness_rwlock_destroy(&b->rwlock);

@@ -9,6 +9,7 @@
 
 int tree_fetch_node_callback(int fd, void *hdr, NID nid, void **n)
 {
+    LOG;
 	int r;
 	struct timespec t1, t2;
 	struct hdr *h = (struct hdr*)hdr;
@@ -27,6 +28,7 @@ int tree_fetch_node_callback(int fd, void *hdr, NID nid, void **n)
 
 int tree_flush_node_callback(int fd, void *hdr, void *n)
 {
+    LOG;
 	int r;
 	struct timespec t1, t2;
 	struct hdr *h = (struct hdr*)hdr;
@@ -44,6 +46,7 @@ int tree_flush_node_callback(int fd, void *hdr, void *n)
 
 int tree_fetch_hdr_callback(int fd, void *hdr)
 {
+    LOG;
 	int r;
 
 	r = deserialize_hdr_from_disk(fd, hdr);
@@ -55,6 +58,7 @@ int tree_fetch_hdr_callback(int fd, void *hdr)
 
 int tree_flush_hdr_callback(int fd, void *hdr)
 {
+    LOG;
 	int r;
 	struct hdr *h = (struct hdr*)hdr;
 
@@ -67,12 +71,14 @@ int tree_flush_hdr_callback(int fd, void *hdr)
 
 int tree_free_node_callback(void *n)
 {
+    LOG;
 	node_free(n);
 	return NESS_OK;
 }
 
 int tree_cache_put_callback(void *n, void *cpair)
 {
+    LOG;
 	struct node *node = (struct node*)n;
 
 	node->cpair = cpair;
@@ -81,6 +87,7 @@ int tree_cache_put_callback(void *n, void *cpair)
 
 int tree_node_is_dirty_callback(void *n)
 {
+    LOG;
 	struct node *node = (struct node*)n;
 
 	return node_is_dirty(node);
@@ -88,6 +95,7 @@ int tree_node_is_dirty_callback(void *n)
 
 int tree_node_set_nondirty_callback(void *n)
 {
+    LOG;
 	struct node *node = (struct node*)n;
 
 	node_set_nondirty(node);

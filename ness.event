@@ -1,9 +1,0 @@
-[10059] | 26 Aug 05:53:27 | DEBUG | tree.c:623 | create new root, NID 4
-[10059] | 26 Aug 05:53:27 | DEBUG | status.h:82 | tree_nodes: leaf [1], nonleaf [0]
-[10059] | 26 Aug 05:53:27 | DEBUG | status.h:85 | leaf_read_from_disk_nums [0]
-[10059] | 26 Aug 05:53:27 | DEBUG | status.h:89 | leaf_compress_data_costs [0], leaf_uncompress_data_costs [0]
-[10059] | 26 Aug 05:53:27 | DEBUG | status.h:92 | nonleaf_read_from_disk_nums [0]
-[10059] | 26 Aug 05:53:27 | DEBUG | status.h:96 | nonleaf_compress_data_costs [0], nonleaf_uncompress_data_costs [0]
-[10059] | 26 Aug 05:53:27 | DEBUG | status.h:102 | tree_node_flush_nums [1], tree_node_flush_costs [0]
-[10059] | 26 Aug 05:53:27 | DEBUG | status.h:108 | tree_node_fetch_nums [0], tree_node_fetch_costs [0]
-[10059] | 26 Aug 05:53:27 | DEBUG | status.h:113 | tree_flush_child_nums [0], tree_flush_child_costs_ms [0]

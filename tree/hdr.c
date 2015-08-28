@@ -12,8 +12,9 @@
 #include "hdr.h"
 
 struct hdr *hdr_new(struct env *e) {
-	struct hdr *hdr = xcalloc(1, sizeof(struct hdr));
+    LOG;
 
+    struct hdr *hdr = xcalloc(1, sizeof(struct hdr));
 	hdr->e = e;
 	hdr->height = 0U;
 	hdr->last_nid = NID_START;
@@ -24,12 +25,14 @@ struct hdr *hdr_new(struct env *e) {
 
 void hdr_free(struct hdr *hdr)
 {
+    LOG;
 	block_free(hdr->block);
 	xfree(hdr);
 }
 
 NID hdr_next_nid(struct hdr *hdr)
 {
+    LOG;
 	atomic64_increment(&hdr->last_nid);
 	nassert(hdr->last_nid >= NID_START);
 
@@ -38,6 +41,7 @@ NID hdr_next_nid(struct hdr *hdr)
 
 MSN hdr_next_msn(struct hdr *hdr)
 {
+    LOG;
 	atomic64_increment(&hdr->last_msn);
 
 	return hdr->last_msn;
@@ -61,6 +65,7 @@ MSN hdr_next_msn(struct hdr *hdr)
  */
 static int _serialize_blockpairs_to_disk(int fd, struct hdr *hdr)
 {
+    LOG;
 	uint32_t i;
 	int r = NESS_OK;
 	uint32_t used_count = 0;
@@ -119,6 +124,7 @@ ERR:
 
 static int _deserialize_blockpairs_from_disk(int fd, struct hdr *hdr)
 {
+    LOG;
 	int r = NESS_ERR;
 	uint32_t read_size;
 	uint32_t align_size;
@@ -160,6 +166,8 @@ static int _deserialize_blockpairs_from_disk(int fd, struct hdr *hdr)
 	uint32_t block_count = 0U;
 
 	if (!msgpack_unpack_uint32(packer, &block_count)) goto ERR;
+    
+    /* printf("|||%d\n", block_count); */
 	pairs = xcalloc(block_count, sizeof(*pairs));
 	for (i = 0; i < block_count; i++) {
 		if (!msgpack_unpack_uint64(packer, &pairs[i].nid)) goto ERR1;
@@ -210,6 +218,7 @@ ERR1:
  */
 int write_hdr_to_disk(int fd, struct hdr *hdr, DISKOFF off)
 {
+    LOG;
 	int r;
 	uint32_t real_size;
 	uint32_t align_size;
@@ -258,6 +267,7 @@ ERR:
  */
 int serialize_hdr_to_disk(int fd, struct hdr *hdr)
 {
+    LOG;
 	int r;
 
 	DISKOFF v0_write_off = 0UL;
@@ -282,6 +292,7 @@ ERR:
 
 int read_hdr_from_disk(int fd, struct hdr *hdr, DISKOFF off)
 {
+    LOG;
 	int r = NESS_ERR;
 	struct msgpack *packer = NULL;
 	uint32_t exp_xsum, act_xsum;
@@ -328,6 +339,11 @@ int read_hdr_from_disk(int fd, struct hdr *hdr, DISKOFF off)
 	if (!msgpack_unpack_uint32(packer, &hdr->blocksize)) goto ERR;
 	if (!msgpack_unpack_uint64(packer, &hdr->blockoff)) goto ERR;
 
+    /* printf("||%lld||\n", hdr->blockoff); */
+    /* printf("||%d||\n", hdr->blocksize); */
+    /* printf("||%lld||\n", hdr->root_nid); */
+    /* printf("||%lld||\n", hdr->last_nid); */
+
 	nassert(hdr->root_nid >= NID_START);
 
 	if (hdr->version < LAYOUT_MIN_SUPPORTED_VERSION) {
@@ -354,6 +370,7 @@ ERR:
 
 int deserialize_hdr_from_disk(int fd, struct hdr *h)
 {
+    LOG;
 	int r;
 	DISKOFF v0_read_off = 0UL;
 	DISKOFF v1_read_off = ALIGN(512);

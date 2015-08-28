@@ -59,6 +59,7 @@ struct env *env_open(const char *home, uint32_t flags) {
 
 	/* internal */
 	e->cache = cache_new(e);
+    /* e->cache->cf_first->hdr->blocksize */
 	nassert(e->cache);
 
 	e->txnmgr = txnmgr_new();
@@ -106,6 +107,9 @@ struct nessdb *db_open(struct env *e, const char *dbname) {
 
 	db = xcalloc(1, sizeof(*db));
 	db->e = e;
+
+    /* struct hdr *tt = (struct hdr *)e->cache->cf_first->hdr; */
+    /* printf("=====%d=====",tt->height); */
 	db->tree = tree;
 
 	return db;

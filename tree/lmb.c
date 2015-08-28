@@ -20,6 +20,7 @@ static inline int _lmb_entry_key_compare(void *a, void *b, void *env)
 }
 
 struct lmb *lmb_new(struct env *e) {
+    LOG;
 	struct lmb *lmb = xmalloc(sizeof(*lmb));
 
 	lmb->mpool = mempool_new();
@@ -108,6 +109,7 @@ uint32_t lmb_memsize(struct lmb *lmb)
 
 uint32_t lmb_count(struct lmb *lmb)
 {
+    LOG;
 	return lmb->count;
 }
 
@@ -168,6 +170,7 @@ void lmb_split(struct lmb *lmb,
                struct lmb **lmbb,
                struct msg **split_key)
 {
+    LOG;
 	uint32_t i = 0;
 	struct mb_iter iter;
 	uint32_t count = lmb_count(lmb);
@@ -175,8 +178,20 @@ void lmb_split(struct lmb *lmb,
 	struct lmb *A = lmb_new(lmb->e);
 	struct lmb *B = lmb_new(lmb->e);
 
+    printf("count=%d,a_count=%d\n", count, a_count);
+    printf("pma size %d, used %d, count %d\n", lmb->pma->size, lmb->pma->used, lmb->pma->count);
 	nassert(count > 1);
 	mb_iter_init(&iter, lmb->pma);
+    /* int total = 0; */
+    /* for (int j = 0; j < lmb->pma->used; j++) { */
+    /*     /1* total += lmb->pma->chain[j]->used; *1/ */
+    /*     printf("current = %d, used == %d\n", j, lmb->pma->chain[j]->used); */
+    /*     /1* for (int k = 0; i < count; i++) { *1/ */
+          
+    /*     /1* } *1/ */
+    /* } */
+
+    /* printf("total_count %d\n", total); */
 	while (mb_iter_next(&iter)) {
 		struct lmb *mb;
 		struct leafentry *le;
@@ -184,12 +199,14 @@ void lmb_split(struct lmb *lmb,
 
 		le = (struct leafentry*)iter.base;
 		nassert(le);
+        /* printf("|||||||||||%d\n", i); */
 
 		/* TODO(BohuTANG): count is 2 */
 		if (i <= a_count) {
 			mb = A;
 			if (nessunlikely(i == a_count)) {
 				struct msg spkey = { .size = le->keylen, .data = le->keyp};
+                printf("||||%s", (char *)spkey.data);
 				*split_key = msgdup(&spkey);
 			}
 		} else {

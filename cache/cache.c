@@ -34,6 +34,7 @@ static inline void cpair_unlocked_by_key(struct cpair_htable *table, NID key)
 }
 
 struct cpair *cpair_new() {
+    LOG;
 	struct cpair *cp;
 
 	cp = xcalloc(1, sizeof(*cp));
@@ -57,6 +58,7 @@ void cpair_init(struct cpair *cp, NID k, void *value, struct cache_file *cf)
  * list (in clock order)
  ******************************/
 struct cpair_list *cpair_list_new() {
+    LOG;
 	struct cpair_list *list;
 
 	list = xcalloc(1, sizeof(*list));
@@ -72,6 +74,7 @@ void cpair_list_free(struct cpair_list *list)
 
 void cpair_list_add(struct cpair_list *list, struct cpair *pair)
 {
+    LOG;
 	if (list->head == NULL) {
 		list->head = pair;
 		list->last = pair;
@@ -99,6 +102,7 @@ void cpair_list_remove(struct cpair_list *list, struct cpair *pair)
  * hashtable
  ******************************/
 struct cpair_htable *cpair_htable_new() {
+    LOG;
 	int i;
 	struct cpair_htable *table;
 
@@ -121,6 +125,7 @@ void cpair_htable_free(struct cpair_htable *table)
 
 void cpair_htable_add(struct cpair_htable *table, struct cpair *pair)
 {
+    LOG;
 	int hash;
 
 	hash = (pair->k & (PAIR_LIST_SIZE - 1));
@@ -194,6 +199,7 @@ static inline void _cf_clock_write_unlock(struct cache_file *cf)
 
 static inline void _cf_clock_read_lock(struct cache_file *cf)
 {
+    LOG;
 	mutex_lock(&cf->mtx);
 	rwlock_read_lock(&cf->clock_lock, &cf->mtx);
 	mutex_unlock(&cf->mtx);
@@ -201,6 +207,7 @@ static inline void _cf_clock_read_lock(struct cache_file *cf)
 
 static inline void _cf_clock_read_unlock(struct cache_file *cf)
 {
+    LOG;
 	mutex_lock(&cf->mtx);
 	rwlock_read_unlock(&cf->clock_lock);
 	mutex_unlock(&cf->mtx);
@@ -234,6 +241,7 @@ static inline int _need_evict(struct cache *c)
 /* try to evict(free) a pair */
 void _try_evict_pair(struct cache_file *cf, struct cpair *p)
 {
+    LOG;
 	int is_dirty;
 	struct tree_callback *tcb = p->cf->tcb;
 
@@ -266,6 +274,7 @@ void _try_evict_pair(struct cache_file *cf, struct cpair *p)
 /* pick one pair from clock list */
 void _run_eviction(struct cache *c)
 {
+    LOG;
 	struct cpair *cur;
 	struct cpair *nxt;
 	/* TODO (BohuTANG) : for all cache files */
@@ -337,6 +346,7 @@ ERR:
 
 void _cpair_insert(struct cache_file *cf, struct cpair *p)
 {
+    LOG;
 	cpair_list_add(cf->clock, p);
 	cpair_htable_add(cf->table, p);
 	cf->cache->cp_count++;
@@ -471,6 +481,7 @@ ERR:
 
 int cache_put_and_pin(struct cache_file *cf, NID k, void *v)
 {
+    LOG;
 	struct cpair *p;
 	struct cache *c = cf->cache;
 	struct tree_callback *tcb = cf->tcb;
@@ -530,6 +541,7 @@ struct cache_file *cache_file_create(struct cache *c,
                                      int fd,
                                      void *hdr,
                                      struct tree_callback *tcb) {
+    LOG;
 	struct cache_file *cf;
 
 	cf = xcalloc(1, sizeof(*cf));

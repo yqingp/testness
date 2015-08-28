@@ -22,13 +22,13 @@ struct hdr {
 	int dirty;
 	int height;
 	int version;
-	uint32_t blocksize;
+	uint32_t blocksize; //block size
 	uint64_t lastseq;
 
 	NID last_nid;
 	NID root_nid;
 	MSN last_msn;
-	DISKOFF blockoff;
+	DISKOFF blockoff; // offset 
 	struct block *block;
 	struct env *e;
 };

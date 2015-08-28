@@ -117,10 +117,10 @@ static void _leaf_and_lmb_split(struct tree *t,
 	struct lmb *mbb;
 	struct msg *sp_key = NULL;
 
-	__DEBUG("leaf split begin, NID %"PRIu64""
+	printf("leaf split begin, NID %"PRIu64""
 	        ", nodesz %d"
 	        ", nodec %d"
-	        ", children %d"
+	        ", children %d\n"
 	        , leaf->nid
 	        , node_size(leaf)
 	        , node_count(leaf)
@@ -332,6 +332,7 @@ enum reactivity get_reactivity(struct tree *t, struct node *node)
 	uint32_t children = node->n_children;
 
 	if (nessunlikely(node->height == 0)) {
+        /* printf("%dessunlikely\n", node->height); */
 		if (node_size(node) >= t->e->leaf_default_node_size)
 			return FISSIBLE;
 	} else {
@@ -464,7 +465,7 @@ static void _root_split(struct tree *t,
 	struct node *b;
 	struct msg *split_key = NULL;
 
-	__DEBUG("root split begin, old NID %"PRIu64" , height %d"
+	printf("root split begin, old NID %"PRIu64" , height %d"
 	        , old_root->nid
 	        , old_root->height);
 
@@ -504,6 +505,7 @@ void _root_fissible(struct tree *t, struct node *root)
 
 	/* alloc a nonleaf node with 2 children */
 	NID nid = hdr_next_nid(t->hdr);
+    printf("|||||%lld", nid);
 	node_create(nid, new_root_height, new_root_children, t->hdr->version, t->e, &new_root);
 	cache_put_and_pin(t->cf, nid, new_root);
 
@@ -531,11 +533,12 @@ int root_put_cmd(struct tree *t, struct bt_cmd *cmd)
 	enum reactivity re;
 	volatile int hasput = 0;
 	enum lock_type locktype = L_READ;
+    /* printf("||||%s", (char *)cmd->val->data); */
 
 CHANGE_LOCK_TYPE:
 	if (!cache_get_and_pin(t->cf, t->hdr->root_nid, (void**)&root, locktype))
 		return NESS_ERR;
-
+    /* printf("|||%lld", root->nid); */
 	if (!hasput) {
 		node_put_cmd(t, root, cmd);
 		hasput = 1;
@@ -544,9 +547,11 @@ CHANGE_LOCK_TYPE:
 	re = get_reactivity(t, root);
 	switch (re) {
 	case STABLE:
+        printf("|||STABLE");
 		cache_unpin(t->cf, root->cpair, make_cpair_attr(root));
 		break;
 	case FISSIBLE:
+        printf("|||FISSIBLE");
 		if (locktype == L_READ) {
 			cache_unpin(t->cf, root->cpair, make_cpair_attr(root));
 			locktype = L_WRITE;
@@ -555,6 +560,7 @@ CHANGE_LOCK_TYPE:
 		_root_fissible(t, root);
 		break;
 	case FLUSHBLE:
+        printf("|||FLUSHBLE");
 		if (locktype == L_READ) {
 			cache_unpin(t->cf, root->cpair, make_cpair_attr(root));
 			locktype = L_WRITE;
@@ -570,6 +576,7 @@ CHANGE_LOCK_TYPE:
 struct tree *tree_open(const char *dbname,
                        struct env *e,
                        struct tree_callback *tcb) {
+    LOG;
 	int fd;
 	int flag;
 	mode_t mode;

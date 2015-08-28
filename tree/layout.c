@@ -20,6 +20,7 @@
  */
 static void serialize_node_header(struct msgpack *packer, struct node *node)
 {
+    LOG;
 	uint32_t xsum = 0;
 	struct msgpack *header = msgpack_new(64 << 10);
 
@@ -48,6 +49,7 @@ static void serialize_node_header(struct msgpack *packer, struct node *node)
 
 static int deserialize_node_header(struct msgpack *packer, struct node *node)
 {
+    LOG;
 	int r = NESS_OK;
 
 	/* 1) magic */
@@ -81,6 +83,7 @@ static int deserialize_node_header(struct msgpack *packer, struct node *node)
 
 static void serialize_node_info(struct msgpack *packer, struct node *node)
 {
+    LOG;
 	int i;
 	uint32_t xsum = 0;
 	struct msgpack *info = msgpack_new(1 << 20);
@@ -112,6 +115,7 @@ static void serialize_node_info(struct msgpack *packer, struct node *node)
 
 static int deserialize_node_info(struct msgpack *packer, struct node *node)
 {
+    LOG;
 	int i;
 	int r = NESS_OK;
 	uint32_t seek = packer->SEEK;
@@ -154,6 +158,7 @@ static int deserialize_node_info(struct msgpack *packer, struct node *node)
 
 static void serialize_node_partition(struct msgpack *packer, struct node *node, int i)
 {
+    LOG;
 	struct partition_disk_info *disk_info = &node->parts[i].disk_info;
 
 	/* 1) partition compressed datas */
@@ -165,6 +170,7 @@ static void serialize_node_partition(struct msgpack *packer, struct node *node, 
 
 static int deserialize_node_partition(struct msgpack *packer, struct node *node, int i)
 {
+    LOG;
 	int r = NESS_OK;
 	uint32_t seek = packer->SEEK;
 	struct partition_disk_info *disk_info = &node->parts[i].disk_info;
@@ -187,6 +193,7 @@ static int deserialize_node_partition(struct msgpack *packer, struct node *node,
 
 static void serialize_node_partitions(struct msgpack *packer, struct node *node)
 {
+    LOG;
 	int i;
 
 	/* first to get skeleton size */
@@ -198,6 +205,7 @@ static void serialize_node_partitions(struct msgpack *packer, struct node *node)
 
 static int deserialize_node_partitions(struct msgpack *packer, struct node *node)
 {
+    LOG;
 	int i;
 	int r = NESS_OK;
 
@@ -217,6 +225,7 @@ ERR:
  */
 void compress_partitions(struct node *node, struct hdr *hdr)
 {
+    LOG;
 	int i;
 	uint32_t bound;
 	uint32_t start = 0U;
@@ -263,6 +272,7 @@ void compress_partitions(struct node *node, struct hdr *hdr)
  */
 void decompress_partitions(struct node *node, struct hdr *hdr)
 {
+    LOG;
 	int r;
 	int i;
 	struct msgpack *part_packer;
@@ -296,6 +306,7 @@ void decompress_partitions(struct node *node, struct hdr *hdr)
 
 void serialize_node_end(struct node *node)
 {
+    LOG;
 	int i;
 
 	for (i = 0; i < node->n_children; i++) {
@@ -309,11 +320,13 @@ void serialize_node_end(struct node *node)
 
 void deserialize_node_end(struct node *node)
 {
+    LOG;
 	(void)node;
 }
 
 void serialize_node_to_packer(struct msgpack *packer, struct node *node, struct hdr *hdr)
 {
+    LOG;
 	/* 1) compress part to subblock */
 	compress_partitions(node, hdr);
 
@@ -332,6 +345,7 @@ void serialize_node_to_packer(struct msgpack *packer, struct node *node, struct 
 
 void deserialize_node_from_packer(struct msgpack *packer, struct node *node, struct hdr *hdr)
 {
+    LOG;
 	/* 1) node header */
 	deserialize_node_header(packer, node);
 
@@ -348,6 +362,7 @@ void deserialize_node_from_packer(struct msgpack *packer, struct node *node, str
 
 int serialize_node_to_disk(int fd, struct node *node, struct hdr *hdr)
 {
+    LOG;
 	int r;
 	uint32_t xsum = 0;
 	uint32_t real_size;
@@ -383,6 +398,7 @@ ERR:
 
 int deserialize_node_from_disk(int fd, struct hdr *hdr, NID nid, struct node **node)
 {
+    LOG;
 	int r = NESS_OK;
 	struct block_pair *bp;
 

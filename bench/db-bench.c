@@ -13,7 +13,7 @@ static struct env *e;
 static struct nessdb *db;
 static uint64_t FLAGS_num = 1;
 static uint64_t FLAGS_cache_size = (1024 * 1024 * 10);
-static const char* FLAGS_benchmarks = "fillseq";
+static const char* FLAGS_benchmarks = "fillrandom";
 static ness_compress_method_t FLAGS_method = NESS_SNAPPY_METHOD;
 
 void _print_warnings()
@@ -110,8 +110,10 @@ void dbwrite(char *name, int random)
 	char kbuf[KEY_SIZE];
 
 	for (i = 0; i < FLAGS_num; i++) {
+        printf("current_%d\n", i);
 		char *vbuf;
-		int key = random ? rnd_next(rnd) % FLAGS_num : i;
+		int key = random ? rand() : i;
+
 
         printf("%016d\n", key);
         memset(kbuf, 0, KEY_SIZE);

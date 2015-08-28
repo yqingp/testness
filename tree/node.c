@@ -13,6 +13,7 @@ static struct node_operations nop = {
 };
 
 struct leaf_basement_node *create_leaf(struct env *e) {
+    LOG;
 	struct leaf_basement_node *leaf = xcalloc(1, sizeof(*leaf));
 
 	leaf->buffer = lmb_new(e);
@@ -22,6 +23,7 @@ struct leaf_basement_node *create_leaf(struct env *e) {
 
 static void free_leaf(struct leaf_basement_node *leaf)
 {
+    LOG;
 	lmb_free(leaf->buffer);
 	xfree(leaf);
 }
@@ -36,12 +38,14 @@ struct nonleaf_childinfo *create_nonleaf(struct env *e) {
 
 static void free_nonleaf(struct nonleaf_childinfo *nonleaf)
 {
+    LOG;
 	nmb_free(nonleaf->buffer);
 	xfree(nonleaf);
 }
 
 void node_set_dirty(struct node *node)
 {
+    LOG;
 	mutex_lock(&node->attr.mtx);
 	if (!node->dirty)
 		ngettime(&node->modified);
@@ -51,6 +55,7 @@ void node_set_dirty(struct node *node)
 
 void node_set_nondirty(struct node *node)
 {
+    LOG;
 	mutex_lock(&node->attr.mtx);
 	node->dirty = 0;
 	mutex_unlock(&node->attr.mtx);
@@ -58,6 +63,7 @@ void node_set_nondirty(struct node *node)
 
 int node_is_dirty(struct node *node)
 {
+    LOG;
 	int ret;
 
 	mutex_lock(&node->attr.mtx);
@@ -76,6 +82,7 @@ int node_is_dirty(struct node *node)
  */
 void node_ptrs_alloc(struct node *node)
 {
+    LOG;
 	int i;
 
 	for (i = 0; i < node->n_children; i++) {
@@ -112,6 +119,7 @@ struct node *node_alloc_empty(NID nid, int height, struct env *e) {
  */
 void node_init_empty(struct node *node, int children, int layout_version)
 {
+    LOG;
 	node->n_children = children;
 	node->layout_version = layout_version;
 
@@ -141,6 +149,7 @@ struct node *node_alloc_full(NID nid,
 
 void node_free(struct node *node)
 {
+    LOG;
 	int i;
 	nassert(node != NULL);
 
@@ -175,6 +184,7 @@ void node_free(struct node *node)
  */
 int node_partition_idx(struct node *node, struct msg *k)
 {
+    LOG;
 	int lo = 0;
 	int hi = node->n_children - 2;
 	int best = hi;
@@ -197,6 +207,7 @@ int node_partition_idx(struct node *node, struct msg *k)
 
 int node_find_heaviest_idx(struct node *node)
 {
+    LOG;
 	int i;
 	int idx = 0;
 	uint32_t sz = 0;
@@ -221,6 +232,7 @@ int node_find_heaviest_idx(struct node *node)
 
 uint32_t node_count(struct node *node)
 {
+    LOG;
 	int i;
 	uint32_t c = 0U;
 
@@ -238,6 +250,7 @@ uint32_t node_count(struct node *node)
 
 uint32_t node_size(struct node *node)
 {
+    LOG;
 	int i;
 	uint32_t sz = 0;
 
@@ -261,6 +274,8 @@ static int _create_node(NID nid,
                         struct env *e,
                         int light)
 {
+
+    LOG;
 	struct node *new_node;
 
 	if (light) {
@@ -286,6 +301,7 @@ int node_create(NID nid,
                 struct env *e,
                 struct node **n)
 {
+    LOG;
 	return _create_node(nid, height, children, version, n, e, 0);
 }
 
@@ -296,5 +312,6 @@ int node_create_light(NID nid,
                       struct env *e,
                       struct node **n)
 {
+    LOG;
 	return _create_node(nid, height, children, version, n, e, 1);
 }
